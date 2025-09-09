@@ -13,3 +13,11 @@ export type ShowcaseComponents = {
   avatars:boolean;
   tabs: boolean;
 };
+
+export type ChartData = {
+  month: string;
+  totalRevenue?: number;
+  subscriptions?: number;
+  yourMinutes?: number;
+  normalMinutes?: number;
+};
