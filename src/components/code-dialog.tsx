@@ -37,13 +37,35 @@ export function CodeDialog() {
     --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
     --accent: ${hexToHslString(theme.accent)};
-    --accent-foreground: 240 6% 10%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
     --ring: ${hexToHslString(theme.primary)};
     --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 240 6% 10%;
+    --foreground: 0 0% 98%;
+    --card: 240 4% 14%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: ${hexToHslString(theme.primary)};
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 18%;
+    --muted-foreground: 240 5% 65%;
+    --accent: ${hexToHslString(theme.accent)};
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 18%;
+    --input: 240 4% 18%;
+    --ring: ${hexToHslString(theme.primary)};
   }
 }
   `;
