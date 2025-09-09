@@ -54,6 +54,7 @@ export default function EditorSidebar({
       setTheme({
         primary: result.data.primaryColor,
         background: result.data.backgroundColor,
+        darkBackground: result.data.darkBackgroundColor,
         accent: result.data.accentColor,
         font: result.data.fontFamily,
       });
@@ -65,7 +66,7 @@ export default function EditorSidebar({
     setIsGenerating(false);
   };
   
-  const handleColorChange = (name: 'primary' | 'background' | 'accent', value: string) => {
+  const handleColorChange = (name: 'primary' | 'background' | 'darkBackground' | 'accent', value: string) => {
     setTheme(prev => ({...prev, [name]: value}));
   }
 
@@ -77,6 +78,7 @@ export default function EditorSidebar({
     setTheme({
       primary: '#6B46C1',
       background: '#F7FAFC',
+      darkBackground: '#1A202C',
       accent: '#3182CE',
       font: 'Inter',
     });
@@ -207,6 +209,22 @@ export default function EditorSidebar({
                   <Input 
                     value={theme.background}
                     onChange={(e) => handleColorChange('background', e.target.value)}
+                    className="h-8"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Dark Background Color</Label>
+                 <div className="flex items-center gap-2">
+                  <Input 
+                    type="color" 
+                    value={theme.darkBackground}
+                    onChange={(e) => handleColorChange('darkBackground', e.target.value)}
+                    className="p-1 h-8 w-8"
+                  />
+                  <Input 
+                    value={theme.darkBackground}
+                    onChange={(e) => handleColorChange('darkBackground', e.target.value)}
                     className="h-8"
                   />
                 </div>

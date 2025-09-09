@@ -47,7 +47,7 @@ export function CodeDialog() {
   }
  
   .dark {
-    --background: 240 6% 10%;
+    --background: ${hexToHslString(theme.darkBackground)};
     --foreground: 0 0% 98%;
     --card: 240 4% 14%;
     --card-foreground: 0 0% 98%;

@@ -11,7 +11,7 @@ export async function generateThemeAction(prompt: string) {
     const result = await generateThemeSuggestion({ aestheticPrompt: prompt });
 
     // Validate the result from the AI
-    if (!result.primaryColor || !result.backgroundColor || !result.accentColor || !result.fontFamily) {
+    if (!result.primaryColor || !result.backgroundColor || !result.darkBackgroundColor || !result.accentColor || !result.fontFamily) {
         return { error: 'AI response was incomplete. Please try again.' };
     }
     

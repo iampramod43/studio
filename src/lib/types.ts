@@ -1,6 +1,7 @@
 export type Theme = {
   primary: string;
   background: string;
+  darkBackground: string;
   accent: string;
   font: string;
 };

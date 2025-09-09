@@ -24,16 +24,18 @@ function applyTheme(theme: Theme, resolvedTheme: string | undefined) {
 
   const primaryHsl = hexToHslString(theme.primary);
   const backgroundHsl = hexToHslString(theme.background);
+  const darkBackgroundHsl = hexToHslString(theme.darkBackground);
   const accentHsl = hexToHslString(theme.accent);
   
-  // We only set the values if they are valid HSL strings.
-  // The CSS file will provide the defaults.
   if (primaryHsl) root.style.setProperty('--primary', primaryHsl);
   
   if (resolvedTheme === 'light' && backgroundHsl) {
     root.style.setProperty('--background', backgroundHsl);
+  } else if (resolvedTheme === 'dark' && darkBackgroundHsl) {
+    root.style.setProperty('--background', darkBackgroundHsl);
   } else {
-    // When in dark mode, remove the inline style to let globals.css take over
+    // When in system mode or for some other reason resolvedTheme is not light or dark,
+    // let globals.css take over
     root.style.removeProperty('--background');
   }
 
@@ -67,6 +69,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   const [theme, setTheme] = useState<Theme>({
     primary: '#6B46C1',
     background: '#F7FAFC',
+    darkBackground: '#1A202C',
     accent: '#3182CE',
     font: 'Inter',
   });

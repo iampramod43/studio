@@ -27,7 +27,12 @@ const GenerateThemeSuggestionOutputSchema = z.object({
   backgroundColor: z
     .string()
     .describe(
-      'The suggested background color in hex format (e.g., #F5EEFF).'
+      'The suggested background color for light mode in hex format (e.g., #F5EEFF).'
+    ),
+  darkBackgroundColor: z
+    .string()
+    .describe(
+      'The suggested background color for dark mode in hex format (e.g., #1A1A1A).'
     ),
   accentColor: z
     .string()
@@ -54,7 +59,7 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateThemeSuggestionOutputSchema},
   prompt: `You are an AI theme suggestion bot. You take a text prompt describing a desired aesthetic and return a theme suggestion consisting of a color palette and typography.
 
-  The color palette consists of a primary color, background color, and accent color, all in hex format.
+  The color palette consists of a primary color, a background color for light mode, a background color for dark mode, and an accent color, all in hex format.
   The typography consists of a font family.
 
   Here is the desired aesthetic: {{{aestheticPrompt}}}
