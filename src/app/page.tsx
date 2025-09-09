@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { ShowcaseComponents } from '@/lib/types';
-import { ThemeProvider } from '@/components/theme-provider';
+import { CustomThemeProvider } from '@/components/custom-theme-provider';
 import EditorSidebar from '@/components/editor-sidebar';
 import ComponentPreview from '@/components/component-preview';
 import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
@@ -18,7 +18,7 @@ export default function Home() {
   });
 
   return (
-    <ThemeProvider>
+    <CustomThemeProvider>
       <SidebarProvider>
         <Sidebar>
           <EditorSidebar showcase={showcase} setShowcase={setShowcase} />
@@ -29,6 +29,6 @@ export default function Home() {
           </main>
         </SidebarInset>
       </SidebarProvider>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 }

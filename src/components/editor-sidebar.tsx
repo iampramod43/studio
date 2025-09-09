@@ -10,6 +10,7 @@ import { TypographyControls } from '@/components/editor/typography-controls';
 import { AiSuggestionForm } from '@/components/editor/ai-suggestion-form';
 import { ComponentShowcaseControls } from '@/components/editor/component-showcase-controls';
 import { ExportControls } from '@/components/editor/export-controls';
+import { ModeToggle } from './mode-toggle';
 
 type EditorSidebarProps = {
   showcase: ShowcaseComponents;
@@ -19,9 +20,12 @@ type EditorSidebarProps = {
 export default function EditorSidebar({ showcase, setShowcase }: EditorSidebarProps) {
   return (
     <div className="flex h-full flex-col bg-card text-card-foreground border-r">
-        <header className="flex items-center gap-2 border-b p-4">
-            <Paintbrush className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold tracking-tight">Shadcn ThemeForge</h1>
+        <header className="flex items-center justify-between border-b p-4">
+            <div className='flex items-center gap-2'>
+              <Paintbrush className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-bold tracking-tight">Shadcn ThemeForge</h1>
+            </div>
+            <ModeToggle />
         </header>
         <ScrollArea className="flex-1">
             <div className="p-4 space-y-6">

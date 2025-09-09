@@ -1,12 +1,12 @@
 'use client';
 
 import { useContext } from 'react';
-import { ThemeContext } from '@/components/theme-provider';
+import { CustomThemeContext } from '@/components/custom-theme-provider';
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
+  const context = useContext(CustomThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error('useTheme must be used within a CustomThemeProvider');
   }
   return context;
 };
