@@ -19,32 +19,40 @@ export const CustomThemeContext = createContext<CustomThemeContextType | undefin
 );
 
 function applyTheme(theme: Theme) {
+  if (typeof document === 'undefined') return;
   const root = document.documentElement;
+
   const primaryHsl = hexToHslString(theme.primary);
   const backgroundHsl = hexToHslString(theme.background);
   const accentHsl = hexToHslString(theme.accent);
-
+  
+  // We only set the values if they are valid HSL strings.
+  // The CSS file will provide the defaults.
   if (primaryHsl) root.style.setProperty('--primary', primaryHsl);
   if (backgroundHsl) root.style.setProperty('--background', backgroundHsl);
   if (accentHsl) root.style.setProperty('--accent', accentHsl);
 
-  root.style.setProperty('--font-body', theme.font);
+  // Set ring color based on primary color
+  if(primaryHsl) root.style.setProperty('--ring', primaryHsl);
 
-  // Update google font link
+  const body = document.body;
   const font = fonts.find(f => f.name === theme.font);
   if (font) {
-      const linkId = 'google-font-body';
-      let link = document.getElementById(linkId) as HTMLLinkElement;
-      if (!link) {
-          link = document.createElement('link');
-          link.id = linkId;
-          link.rel = 'stylesheet';
-          document.head.appendChild(link);
-      }
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${font.value.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
-      if(link.href !== fontUrl) {
-        link.href = fontUrl;
-      }
+    body.style.fontFamily = `'${font.value}', sans-serif`;
+    
+    // Update google font link
+    const linkId = 'google-font-body';
+    let link = document.getElementById(linkId) as HTMLLinkElement;
+    if (!link) {
+        link = document.createElement('link');
+        link.id = linkId;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    }
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${font.value.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+    if(link.href !== fontUrl) {
+      link.href = fontUrl;
+    }
   }
 }
 
@@ -72,16 +80,8 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    // This will run on initial load and whenever the theme state changes.
     applyTheme(theme);
-  }, [theme]);
-
-  // When the dark/light mode changes, re-apply colors to possibly update HSL values if they depend on it.
-  useEffect(() => {
-    if (resolvedTheme) {
-      applyTheme(theme);
-    }
-  }, [resolvedTheme, theme]);
+  }, [theme, resolvedTheme]);
 
   const value = useMemo(() => ({
     theme,

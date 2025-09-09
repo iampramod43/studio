@@ -5,7 +5,6 @@ import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar'
 import EditorSidebar from '@/components/editor-sidebar';
 import ComponentPreview from '@/components/component-preview';
 import type { ShowcaseComponents } from '@/lib/types';
-import { CustomThemeProvider } from '@/components/custom-theme-provider';
 
 export default function Home() {
   const [showcase, setShowcase] = useState<ShowcaseComponents>({
@@ -18,7 +17,6 @@ export default function Home() {
   });
 
   return (
-    <CustomThemeProvider>
       <SidebarProvider>
         <div className="min-h-screen bg-background text-foreground">
           <Sidebar>
@@ -32,6 +30,5 @@ export default function Home() {
           </SidebarInset>
         </div>
       </SidebarProvider>
-    </CustomThemeProvider>
   );
 }
