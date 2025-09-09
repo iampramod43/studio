@@ -27,8 +27,83 @@ import { CreateAccountCard } from '@/components/dashboard/create-account-card';
 import { ExerciseMinutesCard } from '@/components/dashboard/exercise-minutes-card';
 import { PaymentsCard } from '@/components/dashboard/payments-card';
 import { HelpCard } from '@/components/dashboard/help-card';
+import { useTheme } from '@/hooks/use-theme';
+import { useToast } from '@/hooks/use-toast';
+import { CodeDialog } from './code-dialog';
+import React from 'react';
 
 export default function ComponentPreview() {
+  const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleReset = () => {
+    setTheme({
+      primary: '#6B46C1',
+      background: '#F7FAFC',
+      accent: '#3182CE',
+      font: 'Inter',
+    });
+    toast({
+      title: 'Theme Reset',
+      description: 'The theme has been reset to its default values.',
+    });
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const importedTheme = JSON.parse(e.target?.result as string);
+          setTheme(importedTheme);
+          toast({
+            title: 'Theme Imported',
+            description: 'Your theme has been successfully imported.',
+          });
+        } catch (error) {
+          toast({
+            title: 'Import Error',
+            description: 'Failed to parse the theme file.',
+            variant: 'destructive',
+          });
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleShare = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', JSON.stringify(theme));
+    navigator.clipboard.writeText(url.toString());
+    toast({
+      title: 'Link Copied',
+      description: 'A shareable link has been copied to your clipboard.',
+    });
+  };
+
+  const handleSave = () => {
+    const blob = new Blob([JSON.stringify(theme, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'theme.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+      title: 'Theme Saved',
+      description: 'Your theme has been saved as theme.json.',
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b">
@@ -36,11 +111,18 @@ export default function ComponentPreview() {
           <div className="flex justify-between items-center py-4">
             <h1 className="text-xl font-bold">Clean Slate</h1>
             <div className="flex items-center gap-4">
-              <Button variant="ghost">Reset</Button>
-              <Button variant="ghost">Import</Button>
-              <Button variant="ghost">Share</Button>
-              <Button variant="default">Save</Button>
-              <Button variant="outline">Code</Button>
+              <Button variant="ghost" onClick={handleReset}>Reset</Button>
+              <Button variant="ghost" onClick={handleImportClick}>Import</Button>
+               <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="application/json"
+                onChange={handleFileChange}
+              />
+              <Button variant="ghost" onClick={handleShare}>Share</Button>
+              <Button variant="default" onClick={handleSave}>Save</Button>
+              <CodeDialog />
             </div>
           </div>
           <Tabs defaultValue="dashboard">

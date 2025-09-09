@@ -59,6 +59,19 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   const { resolvedTheme } = useNextTheme();
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    const themeStr = url.searchParams.get('theme');
+    if (themeStr) {
+      try {
+        const urlTheme = JSON.parse(themeStr);
+        setTheme(urlTheme);
+      } catch (e) {
+        console.error("Could not parse theme from URL", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     // This will run on initial load and whenever the theme state changes.
     applyTheme(theme);
   }, [theme]);
