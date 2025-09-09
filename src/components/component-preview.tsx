@@ -31,6 +31,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useToast } from '@/hooks/use-toast';
 import { CodeDialog } from './code-dialog';
 import React from 'react';
+import { defaultTheme } from '@/lib/default-theme';
 
 export default function ComponentPreview() {
   const { theme, setTheme } = useTheme();
@@ -38,12 +39,7 @@ export default function ComponentPreview() {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleReset = () => {
-    setTheme({
-      primary: '#6B46C1',
-      background: '#F7FAFC',
-      accent: '#3182CE',
-      font: 'Inter',
-    });
+    setTheme(defaultTheme);
     toast({
       title: 'Theme Reset',
       description: 'The theme has been reset to its default values.',
@@ -111,7 +107,6 @@ export default function ComponentPreview() {
           <div className="flex justify-between items-center py-4">
             <h1 className="text-xl font-bold invisible">ThemeForge</h1>
             <div className="flex items-center gap-4">
-              <Button variant="default" onClick={handleSave}>Save</Button>
             </div>
           </div>
           <Tabs defaultValue="cards">

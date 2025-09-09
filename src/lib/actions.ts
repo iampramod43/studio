@@ -10,21 +10,24 @@ export async function generateThemeAction(prompt: string) {
     }
     const result = await generateThemeSuggestion({ aestheticPrompt: prompt });
 
-    // Validate the result from the AI
-    if (!result.primaryColor || !result.backgroundColor || !result.darkBackgroundColor || !result.accentColor || !result.fontFamily) {
-        return { error: 'AI response was incomplete. Please try again.' };
+    // Basic validation
+    if (!result.light || !result.dark || !result.font || result.radius === undefined) {
+      return { error: 'AI response was incomplete. Please try again.' };
     }
-    
+
     // Ensure the font exists in our list
-    const fontName = result.fontFamily.split(',')[0].replace(/'/g, '').trim();
+    const fontName = result.font.split(',')[0].replace(/'/g, '').trim();
     const fontExists = fonts.some(f => f.name === fontName);
 
     if (!fontExists) {
         // Fallback to a default font if the suggested one isn't available
-        result.fontFamily = 'Inter';
+        result.font = 'Inter';
     } else {
-        result.fontFamily = fontName;
+        result.font = fontName;
     }
+
+    // Clamp radius
+    result.radius = Math.max(0, Math.min(1, result.radius));
 
 
     return { data: result };

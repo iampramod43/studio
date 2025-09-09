@@ -22,15 +22,23 @@ import { Wand2, Code, Download, Share2, Palette, Type, Component, RotateCcw } fr
 import { useToast } from '@/hooks/use-toast';
 import { generateThemeAction } from '@/lib/actions';
 import { fonts } from '@/lib/fonts';
-import type { ShowcaseComponents, Theme } from '@/lib/types';
+import type { ShowcaseComponents, Theme, ColorTheme } from '@/lib/types';
 import { ModeToggle } from './mode-toggle';
 import { useTheme } from '@/hooks/use-theme';
 import { CodeDialog } from './code-dialog';
+import { defaultTheme } from '@/lib/default-theme';
+import { Slider } from './ui/slider';
 
 interface EditorSidebarProps {
   showcase: ShowcaseComponents;
   setShowcase: React.Dispatch<React.SetStateAction<ShowcaseComponents>>;
 }
+
+type ColorPickerGroupProps = {
+  title: string;
+  color: keyof ColorTheme;
+  foregroundColor?: keyof ColorTheme;
+};
 
 export default function EditorSidebar({
   showcase,
@@ -40,6 +48,8 @@ export default function EditorSidebar({
   const [prompt, setPrompt] = useState('');
   const { toast } = useToast();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState<'light' | 'dark'>('light');
+
 
   const handleGenerateTheme = async () => {
     setIsGenerating(true);
@@ -51,13 +61,7 @@ export default function EditorSidebar({
         variant: 'destructive',
       });
     } else if (result.data) {
-      setTheme({
-        primary: result.data.primaryColor,
-        background: result.data.backgroundColor,
-        darkBackground: result.data.darkBackgroundColor,
-        accent: result.data.accentColor,
-        font: result.data.fontFamily,
-      });
+      setTheme(result.data);
       toast({
         title: 'Theme Generated',
         description: 'Your new theme has been applied.',
@@ -66,22 +70,26 @@ export default function EditorSidebar({
     setIsGenerating(false);
   };
   
-  const handleColorChange = (name: 'primary' | 'background' | 'darkBackground' | 'accent', value: string) => {
-    setTheme(prev => ({...prev, [name]: value}));
+  const handleColorChange = (mode: 'light' | 'dark', name: keyof ColorTheme, value: string) => {
+    setTheme(prev => ({
+      ...prev,
+      [mode]: {
+        ...prev[mode],
+        [name]: value
+      }
+    }));
   }
 
   const handleFontChange = (value: string) => {
     setTheme(prev => ({...prev, font: value}));
   }
+
+  const handleRadiusChange = (value: number[]) => {
+    setTheme(prev => ({...prev, radius: value[0]}));
+  }
   
   const handleReset = () => {
-    setTheme({
-      primary: '#6B46C1',
-      background: '#F7FAFC',
-      darkBackground: '#1A202C',
-      accent: '#3182CE',
-      font: 'Inter',
-    });
+    setTheme(defaultTheme);
     toast({
       title: 'Theme Reset',
       description: 'The theme has been reset to its default values.',
@@ -143,6 +151,37 @@ export default function EditorSidebar({
     });
   };
 
+  const ColorPicker = ({ name, title }: { name: keyof ColorTheme, title: string }) => (
+    <div className="space-y-2">
+      <Label>{title}</Label>
+      <div className="flex items-center gap-2">
+        <Input 
+          type="color" 
+          value={theme[activeTab][name]}
+          onChange={(e) => handleColorChange(activeTab, name, e.target.value)}
+          className="p-1 h-8 w-8"
+        />
+        <Input 
+          value={theme[activeTab][name]}
+          onChange={(e) => handleColorChange(activeTab, name, e.target.value)}
+          className="h-8"
+        />
+      </div>
+    </div>
+  );
+  
+  const ColorPickerGroup: React.FC<ColorPickerGroupProps> = ({ title, color, foregroundColor }) => (
+    <AccordionItem value={title.toLowerCase().replace(' ', '-')}>
+      <AccordionTrigger className="px-0 py-2 text-sm">
+        {title}
+      </AccordionTrigger>
+      <AccordionContent className="space-y-4">
+        <ColorPicker name={color} title="Background" />
+        {foregroundColor && <ColorPicker name={foregroundColor} title="Foreground" />}
+      </AccordionContent>
+    </AccordionItem>
+  );
+
   return (
     <div className="h-full flex flex-col border-r bg-card text-card-foreground">
       <div className="p-4 border-b flex justify-between items-center">
@@ -181,70 +220,41 @@ export default function EditorSidebar({
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 space-y-4">
-              <div className="space-y-2">
-                <Label>Primary Color</Label>
-                <div className="flex items-center gap-2">
-                  <Input 
-                    type="color" 
-                    value={theme.primary}
-                    onChange={(e) => handleColorChange('primary', e.target.value)}
-                    className="p-1 h-8 w-8"
-                  />
-                  <Input 
-                    value={theme.primary} 
-                    onChange={(e) => handleColorChange('primary', e.target.value)}
-                    className="h-8"
-                  />
-                </div>
+              <div className="flex w-full">
+                <Button onClick={() => setActiveTab('light')} variant={activeTab === 'light' ? 'default' : 'outline'} className="flex-1 rounded-r-none">Light</Button>
+                <Button onClick={() => setActiveTab('dark')} variant={activeTab === 'dark' ? 'default' : 'outline'} className="flex-1 rounded-l-none">Dark</Button>
               </div>
-              <div className="space-y-2">
-                <Label>Background Color</Label>
-                 <div className="flex items-center gap-2">
-                  <Input 
-                    type="color" 
-                    value={theme.background}
-                    onChange={(e) => handleColorChange('background', e.target.value)}
-                    className="p-1 h-8 w-8"
-                  />
-                  <Input 
-                    value={theme.background}
-                    onChange={(e) => handleColorChange('background', e.target.value)}
-                    className="h-8"
-                  />
-                </div>
+
+              <Accordion type="multiple" className='w-full'>
+                <ColorPickerGroup title="Primary" color="primary" foregroundColor="primaryForeground" />
+                <ColorPickerGroup title="Secondary" color="secondary" foregroundColor="secondaryForeground" />
+                <ColorPickerGroup title="Accent" color="accent" foregroundColor="accentForeground" />
+                <ColorPickerGroup title="Background" color="background" foregroundColor="foreground" />
+                <ColorPickerGroup title="Card" color="card" foregroundColor="cardForeground" />
+                <ColorPickerGroup title="Popover" color="popover" foregroundColor="popoverForeground" />
+                <ColorPickerGroup title="Muted" color="muted" foregroundColor="mutedForeground" />
+                <ColorPickerGroup title="Destructive" color="destructive" foregroundColor="destructiveForeground" />
+              </Accordion>
+              
+              <ColorPicker name="border" title="Border" />
+              <ColorPicker name="input" title="Input" />
+              <ColorPicker name="ring" title="Ring" />
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="charts">
+            <AccordionTrigger className="px-4">
+              <div className='flex items-center gap-2'>
+                <Component />
+                <span>Charts</span>
               </div>
-              <div className="space-y-2">
-                <Label>Dark Background Color</Label>
-                 <div className="flex items-center gap-2">
-                  <Input 
-                    type="color" 
-                    value={theme.darkBackground}
-                    onChange={(e) => handleColorChange('darkBackground', e.target.value)}
-                    className="p-1 h-8 w-8"
-                  />
-                  <Input 
-                    value={theme.darkBackground}
-                    onChange={(e) => handleColorChange('darkBackground', e.target.value)}
-                    className="h-8"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Accent Color</Label>
-                 <div className="flex items-center gap-2">
-                  <Input 
-                    type="color" 
-                    value={theme.accent}
-                    onChange={(e) => handleColorChange('accent', e.target.value)}
-                    className="p-1 h-8 w-8"
-                  />
-                  <Input 
-                    value={theme.accent}
-                    onChange={(e) => handleColorChange('accent', e.target.value)}
-                    className="h-8"
-                  />
-                </div>
-              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 space-y-4">
+              <ColorPicker name="chart1" title="Chart 1" />
+              <ColorPicker name="chart2" title="Chart 2" />
+              <ColorPicker name="chart3" title="Chart 3" />
+              <ColorPicker name="chart4" title="Chart 4" />
+              <ColorPicker name="chart5" title="Chart 5" />
             </AccordionContent>
           </AccordionItem>
 
@@ -268,6 +278,13 @@ export default function EditorSidebar({
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-2">
+                <div className='flex justify-between items-center'>
+                    <Label>Border Radius</Label>
+                    <span className='text-sm text-muted-foreground'>{theme.radius.toFixed(2)}</span>
+                </div>
+                <Slider defaultValue={[theme.radius]} max={1} step={0.05} onValueChange={handleRadiusChange} />
               </div>
             </AccordionContent>
           </AccordionItem>

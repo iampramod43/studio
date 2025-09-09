@@ -13,59 +13,36 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from '@/hooks/use-theme';
 import { hexToHslString } from '@/lib/utils';
-import { Code, Check, Clipboard } from 'lucide-react';
+import { Check, Clipboard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { ColorTheme } from '@/lib/types';
 
 export function CodeDialog() {
   const { theme } = useTheme();
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
 
+  const generateCssVariables = (colorTheme: ColorTheme, radius: number) => {
+    let variables = '';
+    for (const [key, value] of Object.entries(colorTheme)) {
+        const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        const hslString = hexToHslString(value);
+        if (hslString) {
+          variables += `    ${cssVar}: ${hslString};\n`;
+        }
+    }
+    variables += `    --radius: ${radius}rem;\n`
+    return variables;
+  };
+
   const cssVariables = `
 @layer base {
   :root {
-    --background: ${hexToHslString(theme.background)};
-    --foreground: 240 6% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 6% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 6% 10%;
-    --primary: ${hexToHslString(theme.primary)};
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-    --accent: ${hexToHslString(theme.accent)};
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: ${hexToHslString(theme.primary)};
-    --radius: 0.5rem;
+${generateCssVariables(theme.light, theme.radius)}
   }
  
   .dark {
-    --background: ${hexToHslString(theme.darkBackground)};
-    --foreground: 0 0% 98%;
-    --card: 240 4% 14%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 6% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: ${hexToHslString(theme.primary)};
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4% 18%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 4% 18%;
-    --muted-foreground: 240 5% 65%;
-    --accent: ${hexToHslString(theme.accent)};
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 18%;
-    --input: 240 4% 18%;
-    --ring: ${hexToHslString(theme.primary)};
+${generateCssVariables(theme.dark, theme.radius)}
   }
 }
   `;

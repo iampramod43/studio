@@ -4,8 +4,9 @@ import React, { createContext, useState, useMemo, useEffect } from 'react';
 import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from 'next-themes';
 import type { ThemeProviderProps } from 'next-themes/dist/types';
 import { hexToHslString } from '@/lib/utils';
-import type { Theme } from '@/lib/types';
+import type { Theme, ColorTheme } from '@/lib/types';
 import { fonts } from '@/lib/fonts';
+import { defaultTheme } from '@/lib/default-theme';
 
 interface CustomThemeContextType {
   theme: Theme;
@@ -22,34 +23,24 @@ function applyTheme(theme: Theme, resolvedTheme: string | undefined) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
-  const primaryHsl = hexToHslString(theme.primary);
-  const backgroundHsl = hexToHslString(theme.background);
-  const darkBackgroundHsl = hexToHslString(theme.darkBackground);
-  const accentHsl = hexToHslString(theme.accent);
-  
-  if (primaryHsl) root.style.setProperty('--primary', primaryHsl);
-  
-  if (resolvedTheme === 'light' && backgroundHsl) {
-    root.style.setProperty('--background', backgroundHsl);
-  } else if (resolvedTheme === 'dark' && darkBackgroundHsl) {
-    root.style.setProperty('--background', darkBackgroundHsl);
-  } else {
-    // When in system mode or for some other reason resolvedTheme is not light or dark,
-    // let globals.css take over
-    root.style.removeProperty('--background');
+  const currentTheme = resolvedTheme === 'dark' ? theme.dark : theme.light;
+
+  for (const [key, value] of Object.entries(currentTheme)) {
+    const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+    const hslString = hexToHslString(value);
+    if (hslString) {
+      root.style.setProperty(cssVar, hslString);
+    }
   }
 
-  if (accentHsl) root.style.setProperty('--accent', accentHsl);
-
-  // Set ring color based on primary color
-  if(primaryHsl) root.style.setProperty('--ring', primaryHsl);
-
+  // Handle radius and font
+  root.style.setProperty('--radius', `${theme.radius}rem`);
+  
   const body = document.body;
   const font = fonts.find(f => f.name === theme.font);
   if (font) {
     body.style.fontFamily = `'${font.value}', sans-serif`;
     
-    // Update google font link
     const linkId = 'google-font-body';
     let link = document.getElementById(linkId) as HTMLLinkElement;
     if (!link) {
@@ -66,13 +57,7 @@ function applyTheme(theme: Theme, resolvedTheme: string | undefined) {
 }
 
 export function CustomThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>({
-    primary: '#6B46C1',
-    background: '#F7FAFC',
-    darkBackground: '#1A202C',
-    accent: '#3182CE',
-    font: 'Inter',
-  });
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
   const [isGenerating, setIsGenerating] = useState(false);
   const { resolvedTheme } = useNextTheme();
 
