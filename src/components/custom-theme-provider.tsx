@@ -18,7 +18,7 @@ export const CustomThemeContext = createContext<CustomThemeContextType | undefin
   undefined
 );
 
-function applyTheme(theme: Theme) {
+function applyTheme(theme: Theme, resolvedTheme: string | undefined) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
@@ -29,7 +29,14 @@ function applyTheme(theme: Theme) {
   // We only set the values if they are valid HSL strings.
   // The CSS file will provide the defaults.
   if (primaryHsl) root.style.setProperty('--primary', primaryHsl);
-  if (backgroundHsl) root.style.setProperty('--background', backgroundHsl);
+  
+  if (resolvedTheme === 'light' && backgroundHsl) {
+    root.style.setProperty('--background', backgroundHsl);
+  } else {
+    // When in dark mode, remove the inline style to let globals.css take over
+    root.style.removeProperty('--background');
+  }
+
   if (accentHsl) root.style.setProperty('--accent', accentHsl);
 
   // Set ring color based on primary color
@@ -80,7 +87,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    applyTheme(theme);
+    applyTheme(theme, resolvedTheme);
   }, [theme, resolvedTheme]);
 
   const value = useMemo(() => ({
