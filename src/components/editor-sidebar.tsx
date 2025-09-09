@@ -25,6 +25,8 @@ import { fonts } from '@/lib/fonts';
 import type { ShowcaseComponents } from '@/lib/types';
 import { ModeToggle } from './mode-toggle';
 import { useTheme } from '@/hooks/use-theme';
+import { CodeDialog } from './code-dialog';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 interface EditorSidebarProps {
   showcase: ShowcaseComponents;
@@ -214,19 +216,16 @@ export default function EditorSidebar({
         </Accordion>
       </div>
       <div className="p-4 border-t space-y-2">
-        <Button variant="outline" className="w-full">
-          <Code className="mr-2 h-4 w-4" />
-          Get the Code
-        </Button>
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            Download
-          </Button>
-          <Button variant="outline">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
+          <div className="flex items-center gap-2">
+            <Avatar>
+                <AvatarFallback>N</AvatarFallback>
+            </Avatar>
+            <div className='flex-1'>
+                <Input placeholder='Name' />
+            </div>
+             <div className='flex-1'>
+                <Input placeholder='Email' />
+            </div>
         </div>
       </div>
     </div>

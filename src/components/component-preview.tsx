@@ -109,26 +109,14 @@ export default function ComponentPreview() {
       <header className="border-b">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
-            <h1 className="text-xl font-bold">Clean Slate</h1>
+            <h1 className="text-xl font-bold invisible">ThemeForge</h1>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={handleReset}>Reset</Button>
-              <Button variant="ghost" onClick={handleImportClick}>Import</Button>
-               <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="application/json"
-                onChange={handleFileChange}
-              />
-              <Button variant="ghost" onClick={handleShare}>Share</Button>
               <Button variant="default" onClick={handleSave}>Save</Button>
-              <CodeDialog />
             </div>
           </div>
-          <Tabs defaultValue="dashboard">
+          <Tabs defaultValue="cards">
             <TabsList>
               <TabsTrigger value="cards">Cards</TabsTrigger>
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="mail">Mail</TabsTrigger>
               <TabsTrigger value="pricing">Pricing</TabsTrigger>
               <TabsTrigger value="color-palette">Color Palette</TabsTrigger>
@@ -141,8 +129,8 @@ export default function ComponentPreview() {
       </header>
 
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
-        <Tabs defaultValue="dashboard" className="w-full">
-          <TabsContent value="dashboard">
+        <Tabs defaultValue="cards" className="w-full">
+          <TabsContent value="cards">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <TotalRevenueCard />

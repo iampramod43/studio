@@ -3,16 +3,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 
 export function UpgradeSubscriptionCard() {
   return (
@@ -67,18 +63,6 @@ export function UpgradeSubscriptionCard() {
               </Label>
             </div>
           </RadioGroup>
-        </div>
-        <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea id="notes" placeholder='Enter notes' />
-        </div>
-        <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <Label htmlFor="terms">I agree to the terms and conditions</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-            <Checkbox id="send-emails" checked />
-            <Label htmlFor="send-emails">Allow us to send you emails</Label>
         </div>
       </CardContent>
     </Card>
